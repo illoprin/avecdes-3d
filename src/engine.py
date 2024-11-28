@@ -93,12 +93,13 @@ class SimplexEngine(mglw.WindowConfig):
 			print (f'Avecdes 3D: /{CACHE_DIR} folder created')
 
 	def take_screenshot(self):
-		data = self.ctx.screen.read(components=4) # COLOR
+		data = self.ctx.screen.read(components=3) # COLOR
 		# data = self.scene.fbo.read(attachment=1) # DEPTH
-		file_path = f'{SCREENSHOTS_DIR}/{datetime.now().strftime("%d-%m-%YT%H_%M-%S")}.png'
-		Image.frombytes('RGBA', WIN_MODE, data).transpose(Image.FLIP_TOP_BOTTOM).save(
+		file_path = f'{SCREENSHOTS_DIR}/{datetime.now().strftime("%d-%m-%YT%H_%M-%S")}.jpg'
+		Image.frombytes('RGB', WIN_MODE, data).transpose(Image.FLIP_TOP_BOTTOM).save(
 			file_path,
-			format='PNG',
+			format='JPEG',
+			quality=80
 		)
 	
 	##### HANDLE INPUT EVENTS #####
