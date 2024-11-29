@@ -38,6 +38,8 @@ class Scene():
 	def update(self, time=0, delta_time=1):
 		# Update physics world
 		self.physics_world.update(delta_time)
+		# Apply velocities
+		[obj.transform(obj.rigidbody.velocity.to_tuple()) for obj in self.objects]
 
 	def render(self, mode=mgl.TRIANGLES):
 		self.fbo.use()

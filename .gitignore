@@ -1,3 +1,8 @@
 _sketches
 screenshots
 cache
+./src/player/__pycache__
+./src/physics/__pycache__
+./src/mesh/__pycache__
+./src/levels/__pycache__
+./src/__pycache__

@@ -1,7 +1,7 @@
-import numpy as np
-import glm
 import moderngl as mgl
+import numpy as np
 import math
+import glm
 
 # OpenGL context
 OPENGL_STATEMENTS = mgl.DEPTH_TEST | mgl.CULL_FACE | mgl.BLEND
@@ -37,3 +37,7 @@ PLAYER_SPEED = 2
 PLAYER_SENSITIVITY = 0.1
 PLAYER_SPEED_MODIFER = 2.0
 PLAYER_H = 2
+
+# Physics
+PHYS_GRAVITY = glm.vec3(0, -9.81, 0)
+PHYS_WINDAGE = .35 # Air resistance

@@ -10,6 +10,6 @@ out vec4 frag_color;
 void main() {
 	vec3 inv_gamma = vec3(1 / gamma);
 	vec2 new_uv = abs(vec2(1.0) - out_uv);
-	vec4 scene_texure = texture(scene_view, new_uv);
-	frag_color = vec4(pow(scene_texure.rgb, inv_gamma), scene_texture.a);
+	vec4 scene_texture = texture(scene_view, new_uv);
+	frag_color = vec4(pow(scene_texture.rgb, inv_gamma), scene_texture.a);
 }

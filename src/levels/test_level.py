@@ -9,13 +9,21 @@ class TestLevel(Scene):
 	def __init__ (self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		cube_vao = mglg.cube()
-		self.cube_e = Entity(vao=cube_vao, texture='textures/checker', pos=(0, 0, 0))
+		self.cube_e = Entity(
+			vao=cube_vao, 
+			texture='textures/checker', 
+			pos=(0, 0, 0),
+			collider='aabb',
+			name='movingCube'
+		)
 		self.append_object(self.cube_e)
 		self.append_object(Entity(
 			cube_vao, 
-			texture='textures/checker', 
+			texture='textures/checker',
 			pos=(0, 4, 0),
-			scl=(10, .5, 10)
+			scl=(10, .5, 10),
+			collider='aabb',
+			name='ground'
 		))
 		self.append_object(Entity(
 			cube_vao, 
@@ -38,6 +46,6 @@ class TestLevel(Scene):
 		player_position = self.app.player.camera.position
 		delta = player_position - self.cube_e.position
 		player_dir = glm.vec3(0.0) if glm.length(delta) <= 2 else glm.normalize(delta) * delta_time * 5
-		self.cube_e.transform(player_dir)
+		self.cube_e.rigidbody.add_force(player_dir)
 		# Super update physics world
 		super().update(time, delta_time)

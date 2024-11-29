@@ -1,8 +1,11 @@
 from src.settings import *
 from src.texture import TextureManager
+from src.physics.physics_engine import *
+from src.physics.aabb import AABB
+from src.physics.rigidbody import Rigidbody
 
 class Entity():
-	def __init__(self, 
+	def __init__(self,
 		vao, 
 		program: mgl.Program = None, 
 		pos=(0,0,0), 
@@ -11,7 +14,10 @@ class Entity():
 		model=glm.mat4x4(1.0), 
 		texture=None,
 		collider='none',
+		use_physics=False,
+		name='defaultEntity'
 	):
+		self.name = name
 		self.vao = vao
 		self.program = program
 		# Transforms
@@ -26,7 +32,15 @@ class Entity():
 		# Texturing
 		self.texture_filter_type = mgl.LINEAR
 		self.texture = None if not texture else TextureManager.load_texture(vao.ctx, texture, False, mgl.LINEAR)
-		self.collider_type = collider
+		# Physics
+		if not collider == 'none':
+			self.collider = AABB(self)
+		elif not collider == 'none' and use_physics:
+			self.collider = AABB(self)
+			self.rigidbody = Rigidbody()
+		else:
+			self.collider = Collider()
+			self.rigidbody = None
 
 	def rotate(self, rotation=(0, 0, 0)):
 		pitch, yaw, roll = rotation
