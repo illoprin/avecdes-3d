@@ -24,7 +24,7 @@ class SimplexEngine(mglw.WindowConfig):
 
 		# Init base vars
 		self.time = 0
-		self.delta_time = 0
+		self.delta_time = 1
 		self.fps = 0
 		# Create help folders
 		self.create_dirs()
@@ -50,7 +50,6 @@ class SimplexEngine(mglw.WindowConfig):
 		
 
 	def render_scene(self):
-		# self.scene_light_shader.set_byte_data('u_camera_dir', self.player.camera.forward)
 		self.scene.render()
 
 	def init_screen(self):
@@ -62,11 +61,13 @@ class SimplexEngine(mglw.WindowConfig):
 		# COMBINING FBOS
 		# Use main screen framebuffer
 		self.ctx.screen.use()
-		self.ctx.screen.clear(0, 0, 0, 0)
+		self.ctx.screen.clear(0, 0, 0, 1.0)
 		# Use texture of 3d scene framebuffer
-		self.scene.fbo_color.use(0)
+		self.scene.fbo_color.use(SCENE_FRAMEBUFFER)
+		# User scene depth texture
+		# self.scene.fbo_depth_texture.use(SCENE_DEPTH_FRAMEBUFFER)
 		# Send this texture to the screen shader
-		self.screen_shader.set_uniform('scene_view', 0)
+		self.screen_shader.set_uniform('scene_view', SCENE_FRAMEBUFFER)
 		# Render fullscreen quad
 		self.screen_vao.render(mode=mgl.TRIANGLES, program=self.screen_shader.program)
 
@@ -93,7 +94,7 @@ class SimplexEngine(mglw.WindowConfig):
 			print (f'Avecdes 3D: /{CACHE_DIR} folder created')
 
 	def take_screenshot(self):
-		data = self.ctx.screen.read(components=3) # COLOR
+		data = self.scene.fbo.read(components=3) # COLOR
 		# data = self.scene.fbo.read(attachment=1) # DEPTH
 		file_path = f'{SCREENSHOTS_DIR}/{datetime.now().strftime("%d-%m-%YT%H_%M-%S")}.jpg'
 		Image.frombytes('RGB', WIN_MODE, data).transpose(Image.FLIP_TOP_BOTTOM).save(

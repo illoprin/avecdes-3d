@@ -1,35 +1,6 @@
-from src.entity.entity import Entity
 from src.settings import *
 from enum import IntEnum
-
-def has_intersection_aabb_aabb (entity_a: Entity, entity_b: Entity):
-	a_pos_x, a_pos_y, a_pos_z = entity_a.position.to_list()
-	b_pos_x, b_pos_y, b_pos_z = entity_b.position.to_list()
-	a_scl_x, a_scl_y, a_scl_z = entity_a.scale.to_list()
-	b_scl_x, b_scl_y, b_scl_z = entity_b.scale.to_list()
-	x_left = a_pos_x - a_scl_x / 2 < b_pos_x + b_scl_x / 2
-	x_right = a_pos_x + a_scl_x / 2 > b_pos_x - b_scl_x / 2
-	y_up = a_pos_y + a_scl_y / 2 > b_pos_y - b_scl_y / 2
-	y_down = a_pos_y - a_scl_y / 2 < b_pos_y + b_scl_y / 2
-	z_forward = a_pos_z + a_scl_z / 2 > b_pos_z + b_scl_z / 2
-	z_backward = a_pos_z - a_scl_z / 2 < b_pos_z - b_scl_z / 2
-	if x_left and x_right and y_up and y_down and z_forward and z_backward:
-		return True
-	return False
-
-def resolve_collision_aabb_aabb(obj_a: Entity, obj_b: Entity):
-	if obj_a.rigidbody != None and obj_b.rigidbody == None:
-		obj_a.rigidbody.zero_velocity()
-		return
-	
-	if obj_b.rigidbody != None and obj_a.rigidbody == None:
-		obj_b.rigidbody.zero_velocity()
-	
-	if obj_b.rigidbody != None and obj_a.rigidbody != None:
-		print ('Collision Resolver - I dont know how to resolve that')
-		obj_a.rigidbody.zero_velocity()
-		obj_b.rigidbody.zero_velocity()
-	
+from sys import float_info
 
 class ColliderType(IntEnum):
 	NoCollider = 0
@@ -39,8 +10,96 @@ class ColliderType(IntEnum):
 class Collider():
 	tag = ColliderType.NoCollider
 
-class Collision():
-	def __init__ (self, obj_a: Entity, obj_b: Entity):
-		self.obj_a = obj_a
-		self.obj_b = obj_b
 
+def aabb_test_axis (axis, min_a, max_a, min_b, max_b, mtv_axis, mtv_len):
+	# Separating Axis Theorem
+    # =======================
+    # - Two convex shapes only overlap if they overlap on all axes of separation
+    # - In order to create accurate responses we need to find the collision vector (Minimum Translation Vector)   
+    # - The collision vector is made from a vector and a scalar, 
+    #   - The vector value is the axis associated with the smallest penetration
+    #   - The scalar value is the smallest penetration value
+    # - Find if the two boxes intersect along a single axis
+    # - Compute the intersection interval for that axis
+    # - Keep the smallest intersection/penetration value
+	axis = glm.vec3(axis)
+	axis_length_squared = glm.dot(axis, axis)
+	# If axis degenerate -> then ignore
+	# if axis_length_squared < 1.0e-8:
+		# return True
+	
+	# Calculate overlapping
+	d0 = max_b - min_a
+	d1 = max_a - min_b
+
+	if d0 <= 0 or d1 <= 0:
+		return False
+	
+	overlap = d0 if (d0 < d1) else -d1
+
+	# MTD - minimum translation distance
+	sep = axis * (overlap / axis_length_squared)
+
+	len = glm.dot(sep, sep)
+
+	# If MTV is smaller than computed MTD vector -> update MTV vector
+	# if (len < mtv_len):
+	return [sep, len]
+
+
+def has_intersection_aabb_aabb (entity_a, entity_b):
+	# Get first AABB min and max points
+	a_max_x, a_max_y, a_max_z = entity_a.collider.max
+	a_min_x, a_min_y, a_min_z = entity_a.collider.min
+	# Get second AABB min and max points
+	b_max_x, b_max_y, b_max_z = entity_b.collider.max
+	b_min_x, b_min_y, b_min_z = entity_b.collider.min
+
+	# Init MTV (Minimum Translation Vector)
+	# MTV axis - axis of minimum depth of intersection
+	mtv_axis = glm.vec3()
+	# MTV mag - the length of that intersection
+	mtv_len = float_info.max
+
+	# Idea: check all axis on mix/max intersection and find the minimum one
+	# then shift one of objects belong that axis
+
+	# Check separate axis
+	result = []
+	result.append(aabb_test_axis((1, 0, 0), a_min_x, a_max_x, b_min_x, b_max_x, mtv_axis, mtv_len))
+	result.append(aabb_test_axis((0, 1, 0), a_min_y, a_max_y, b_min_y, b_max_y, mtv_axis, mtv_len))
+	result.append(aabb_test_axis((0, 0, 1), a_min_z, a_max_z, b_min_z, b_max_z, mtv_axis, mtv_len))
+	for axis in result:
+		if axis:
+			sep, len = axis
+			if len < mtv_len:
+				mtv_len = len
+				mtv_axis = sep
+		else:
+			return False
+
+	overlap = mtv_len * glm.normalize(mtv_axis)
+
+	return Collision (overlap, entity_a, entity_b)
+
+class Collision():
+	def __init__ (self, overlap: glm.vec3, active, target):
+		self.active = active
+		self.target = target
+		self.overlap = overlap
+
+	@property
+	def responce(self):
+		responce = {
+			'active': glm.vec3(),
+			'target': glm.vec3()
+		}
+		if self.active.rigidbody != None and self.target.rigidbody == None:
+			responce['active'] = self.overlap	
+		elif self.active.rigidbody != None and self.target.rigidbody == None:
+			responce['target'] = self.overlap
+		elif self.active.rigidbody != None and self.target.rigidbody != None:
+			half_overlap = self.overlap / 2
+			responce['active'] = half_overlap
+			responce['target'] = -half_overlap
+		return responce

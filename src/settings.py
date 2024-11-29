@@ -19,11 +19,16 @@ SHADER_DIR = 'src/shaders'
 SCREENSHOTS_DIR = 'screenshots'
 CACHE_DIR = 'cache'
 
+# Texture biffer indices
+SCENE_FRAMEBUFFER = 0
+SCENE_DEPTH_FRAMEBUFFER = 1
+DEFAULT_TEXTURE = 2
+LEVEL_TEXARRAY = 3
+
 # World dirs
 DIR_UP = glm.vec3(0, 1, 0)
 DIR_FORWARD = glm.vec3(0, 0, 1)
 DIR_RIGHT = glm.vec3(1, 0, 0)
-
 
 # Camera
 CAM_FOV = 90
@@ -40,4 +45,4 @@ PLAYER_H = 2
 
 # Physics
 PHYS_GRAVITY = glm.vec3(0, -9.81, 0)
-PHYS_WINDAGE = .35 # Air resistance
+PHYS_WINDAGE = 0.76 # Air resistance

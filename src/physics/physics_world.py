@@ -4,36 +4,42 @@ from src.physics.physics_engine import *
 
 class PhysicsWorld():
 	def __init__(self, gravity: tuple) -> None:
-		self.objects: list[Entity] = []
-		self.collisions: list[Collision] = []
+		self.objects = []
+		self.collision_pairs = []
 		self.gravity = glm.vec3(*gravity)
-		self.delta_time = 1
 
-	def add(self, entity: Entity):
-		self.colliders.append(entity)
+	def add(self, entity):
+		if entity.collider.tag != ColliderType.NoCollider:
+			self.objects.append(entity)
 
 	def update(self, delta_time):
-		self.delta_time = delta_time
-		self.update_rigidbodies()
-		self.detect_collisions()
-		self.resolve_collisions()
-
-	def update_rigidbodies(self):
 		for obj in self.objects:
-			if obj.rigidbody:
-				obj.rigidbody.update(self.delta_time)
-	
-	def detect_collisions(self):
-		for a_obj in self.objects:
-			for b_obj in self.objects:
-				if a_obj == b_obj: continue
-				if has_intersection_aabb_aabb(a_obj, b_obj):
-					self.collisions.append(Collision(a_obj, b_obj))
+			self.update_rigidbodies(obj, delta_time)
+			self.detect_collisions(obj)
+			self.collision_responce()
 
-	def resolve_collisions(self):
-		for collision in self.collisions:
-			if collision.obj_a.collider.tag == ColliderType.AABB and collision.obj_b.collider.tag == ColliderType.AABB:
-				resolve_collision_aabb_aabb(collision.obj_a, collision.obj_b)  
-	
-	def resolve_collision(self, a_obj, b_obj):
-		print (f'Has collision with {a_obj.name} and {b_obj.name}')
+	def update_rigidbodies(self, active, delta_time):
+		if active.rigidbody != None:
+			active.rigidbody.update(delta_time)
+			active.position += active.rigidbody.velocity
+		
+	def detect_collisions(self, active):
+		for target in self.objects:
+			if active == target: continue
+			active_type, target_type = active.collider.tag, target.collider.tag
+			if active_type == ColliderType.AABB and target_type == ColliderType.AABB:
+				collision = has_intersection_aabb_aabb(active, target) 
+				if collision:
+					self.collision_pairs.append([active, target])
+					collision_responce = collision.responce
+					active.position += collision_responce['active']
+					target.position += collision_responce['target']
+					if active.rigidbody != None:
+						active.rigidbody.reset_velocity()
+						active.rigidbody.grounded = collision_responce['active'].y > 0.0
+					# print (f'PhysicsWorld: has collision of {active.name} and {target.name}\tOverlap is: {collision.overlap.to_tuple()}')
+
+	def collision_responce(self):
+		# TODO: Apply momentum responce when two rigidbodies colliding
+		pass
+		self.collisions = []
