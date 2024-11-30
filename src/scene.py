@@ -4,9 +4,9 @@ from src.entity.entity import Entity
 from src.physics.physics_world import PhysicsWorld
 
 class Scene():
-	def __init__(self, app, standart_shader, name: str = 'avecdes'):
+	def __init__(self, app, shader, name: str = 'avecdes'):
 		self.name = name
-		self.s_program = standart_shader.program
+		self.s_program = shader.program
 		self.app = app
 		self.ctx: mgl.Context = app.ctx
 		self.objects: list[Entity] = []

@@ -25,6 +25,3 @@ class Shader():
 	def clear(self):
 		self.program.release()
 		print (f'Shader program {self.name} - Released!')
-
-
-		

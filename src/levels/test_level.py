@@ -12,12 +12,13 @@ class TestLevel(Scene):
 		self.cube_e = Entity(
 			vao=cube_vao, 
 			texture='textures/checker', 
-			pos=(0, 5, 0),
+			pos=(0, 2, 5),
 			collider='aabb',
 			use_physics=True,
-			name='movingCube'
+			name='top'
 		)
-		self.cube_e.rigidbody.use_gravity = True
+		self.append_object(self.cube_e)
+
 		self.append_object(Entity(
 			vao=cube_vao, 
 			texture='textures/checker', 
@@ -25,28 +26,27 @@ class TestLevel(Scene):
 			collider='aabb',
 			use_physics=True,
 			gravity=True,
-			name='RandomCubes'
+			name='bottom'
 		))
 		self.append_object(Entity(
 			vao=cube_vao, 
 			texture='textures/checker', 
-			pos=(-1, 8, -3),
+			pos=(0, 5, 0),
 			collider='aabb',
 			use_physics=True,
 			gravity=True,
 			name='RandomCubes'
 		))
-		self.append_object(Entity(
-			vao=cube_vao, 
-			texture='textures/checker', 
-			pos=(-2, 7, -.3),
-			collider='aabb',
-			use_physics=True,
-			gravity=True,
-			name='RandomCubes'
-		))
+		# self.append_object(Entity(
+		# 	vao=cube_vao, 
+		# 	texture='textures/checker', 
+		# 	pos=(-2, 7, -.3),
+		# 	collider='aabb',
+		# 	use_physics=True,
+		# 	gravity=True,
+		# 	name='RandomCubes'
+		# ))
 
-		self.append_object(self.cube_e)
 		self.append_object(Entity(
 			cube_vao, 
 			texture='textures/wood',

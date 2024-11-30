@@ -28,15 +28,13 @@ class PhysicsWorld():
 			if active == target: continue
 			active_type, target_type = active.collider.tag, target.collider.tag
 			if active_type == ColliderType.AABB and target_type == ColliderType.AABB:
-				collision = has_intersection_aabb_aabb(active, target) 
+				collision = has_intersection_aabb_aabb(active, target)
 				if collision:
 					self.collision_pairs.append([active, target])
 					collision_responce = collision.responce
 					active.position += collision_responce['active']
 					target.position += collision_responce['target']
-					if active.rigidbody != None:
-						active.rigidbody.reset_velocity()
-						active.rigidbody.grounded = collision_responce['active'].y > 0.0
+					if active.has_rigidbody: active.rigidbody.grounded = gravity_collinear(-collision_responce['active'])
 					# print (f'PhysicsWorld: has collision of {active.name} and {target.name}\tOverlap is: {collision.overlap.to_tuple()}')
 
 	def collision_responce(self):

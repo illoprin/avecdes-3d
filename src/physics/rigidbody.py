@@ -1,4 +1,10 @@
 from src.settings import *
+from src.physics.physics_engine import gravity_collinear
+
+# TODO: Решить проблему с телами, которые лежат друг на друге
+#	Сейчас их grounded = False даже когда они уже лежат друг на друге
+#	Переписать Rigidbody - все тела (и статичные, и динамичные) имеют Rigidbody
+#	RigidType.Static = 0 RigidType.Dynamic = 1
 
 class Rigidbody():
 	def __init__(self,
@@ -21,10 +27,14 @@ class Rigidbody():
 		# If using gravity
 		if self.use_gravity and not self.grounded:
 			self.velocity += PHYS_GRAVITY
+		elif self.grounded:
+			self.reset_velocity()
 		##################
+		# print (self.grounded)
 		self.velocity *= PHYS_WINDAGE * self.delta_time
 
 	def add_force (self, vec: glm.vec3):
+		if self.grounded and not gravity_collinear(vec): self.grounded = False
 		self.acceleration = vec / self.mass
 
 	def reset_velocity (self):

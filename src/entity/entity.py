@@ -27,8 +27,10 @@ class Entity():
 		self.update()
 		# Texturing
 		self.texture_filter_type = mgl.LINEAR
-		self.texture = None if not texture else TextureManager.load_texture(vao.ctx, texture, False, mgl.LINEAR)
+		self.texture = None if not texture else TextureManager.load_texture(vao.ctx, texture, False, mgl.NEAREST)
 		# Physics
+		self.rigidbody = None
+		self.collider = Collider()
 		if collider == 'aabb' and (not use_physics):
 			self.collider = AABB(self)
 			self.rigidbody = None
@@ -37,13 +39,14 @@ class Entity():
 			self.collider = AABB(self)
 			self.rigidbody = Rigidbody(use_gravity=gravity)
 			print (f'Entity: {self.name} - Added rigidbody and AABB collider')
-		elif collider == 'none' and (not use_physics):
-			self.collider = Collider()
-			self.rigidbody = None
 	
 	@property
 	def name(self):
 		return f'Entity.{self._name}'
+
+	@property
+	def has_rigidbody(self):
+		return self.rigidbody != None
 
 	def set_model(self, pos, rot, scl):
 		model = glm.mat4x4(1.0)
@@ -74,8 +77,8 @@ class Entity():
 		self.set_model(self.position, self.rotation, self.scale)
 
 	def render(self, mode=mgl.TRIANGLES):
-		self.texture.use(DEFAULT_TEXTURE)
-		self.program['u_texture'] = DEFAULT_TEXTURE
+		self.texture.use(TextureSlot.DiffuseMap)
+		self.program['u_texture'] = TextureSlot.DiffuseMap
 		self.program['m_model'].write(self.model)
 		self.vao.render(self.program, mode)
 

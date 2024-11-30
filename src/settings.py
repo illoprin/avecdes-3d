@@ -1,3 +1,4 @@
+from enum import IntEnum
 import moderngl as mgl
 import numpy as np
 import math
@@ -19,11 +20,12 @@ SHADER_DIR = 'src/shaders'
 SCREENSHOTS_DIR = 'screenshots'
 CACHE_DIR = 'cache'
 
-# Texture biffer indices
-SCENE_FRAMEBUFFER = 0
-SCENE_DEPTH_FRAMEBUFFER = 1
-DEFAULT_TEXTURE = 2
-LEVEL_TEXARRAY = 3
+class TextureSlot(IntEnum):
+	SceneColorBuffer = 0
+	SceneDepthBuffer = 1
+	DiffuseMap = 2
+	NormalMap = 3
+	LevelTextureArray = 4
 
 # World dirs
 DIR_UP = glm.vec3(0, 1, 0)
@@ -31,8 +33,8 @@ DIR_FORWARD = glm.vec3(0, 0, 1)
 DIR_RIGHT = glm.vec3(1, 0, 0)
 
 # Camera
-CAM_FOV = 90
-CAM_FOV_V = glm.radians(CAM_FOV)
+CAM_FOV = math.pi / 2 + math.pi / 4
+CAM_FOV_V = CAM_FOV
 CAM_FOV_H = 2 * glm.tan(glm.atan(CAM_FOV_V / 2) * WIN_ASPECT)
 CAM_NEAR_FAR = (0.01, 5000.0)
 CAM_MAX_PITCH = math.pi / 2

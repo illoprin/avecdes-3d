@@ -9,13 +9,13 @@ in vec3 out_normal;
 
 uniform sampler2D u_texture;
 
-uniform vec3 u_camera_dir;
+uniform vec3 u_camera_position;
 
 uniform vec3 u_ambient_light = vec3(1.0);
 
 void main() {
 	// Ambient light
-	float theta = dot(-u_camera_dir, out_normal) * .5;
+	float theta = dot(normalize(u_camera_position - obj_frag_position), out_normal) * .5;
 	float al_modifer = min(.5 + theta, 1.0);
 	vec3 al = u_ambient_light * al_modifer;
 	

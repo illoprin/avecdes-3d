@@ -94,12 +94,15 @@ class Collision():
 			'active': glm.vec3(),
 			'target': glm.vec3()
 		}
-		if self.active.rigidbody != None and self.target.rigidbody == None:
+		if self.active.has_rigidbody and not self.target.has_rigidbody:
 			responce['active'] = self.overlap	
-		elif self.active.rigidbody != None and self.target.rigidbody == None:
+		elif not self.active.has_rigidbody and self.target.has_rigidbody:
 			responce['target'] = self.overlap
-		elif self.active.rigidbody != None and self.target.rigidbody != None:
+		elif self.active.has_rigidbody and self.target.has_rigidbody:
 			half_overlap = self.overlap / 2
 			responce['active'] = half_overlap
 			responce['target'] = -half_overlap
 		return responce
+	
+def gravity_collinear(vec: glm.vec3):
+	return glm.dot(glm.normalize(vec), glm.normalize(PHYS_GRAVITY)) > 0.9

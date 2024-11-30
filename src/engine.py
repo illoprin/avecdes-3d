@@ -36,7 +36,7 @@ class SimplexEngine(mglw.WindowConfig):
 		self.update_window()
 
 	def init_scene(self):
-		self.scene_light_shader = Shader(self.ctx, 'd_light')
+		self.scene_light_shader = Shader(self.ctx, 'default')
 		self.player = Player(self.wnd, self.scene_light_shader, pos=(0, 0, -2))
 		self.scene = TestLevel(self, self.scene_light_shader, 'test_level')
 		
@@ -50,6 +50,7 @@ class SimplexEngine(mglw.WindowConfig):
 		
 
 	def render_scene(self):
+		self.scene_light_shader.set_byte_data('u_camera_position', self.player.camera.position)
 		self.scene.render()
 
 	def init_screen(self):
@@ -63,11 +64,11 @@ class SimplexEngine(mglw.WindowConfig):
 		self.ctx.screen.use()
 		self.ctx.screen.clear(0, 0, 0, 1.0)
 		# Use texture of 3d scene framebuffer
-		self.scene.fbo_color.use(SCENE_FRAMEBUFFER)
+		self.scene.fbo_color.use(TextureSlot.SceneColorBuffer)
 		# User scene depth texture
 		# self.scene.fbo_depth_texture.use(SCENE_DEPTH_FRAMEBUFFER)
 		# Send this texture to the screen shader
-		self.screen_shader.set_uniform('scene_view', SCENE_FRAMEBUFFER)
+		self.screen_shader.set_uniform('scene_view', TextureSlot.SceneColorBuffer)
 		# Render fullscreen quad
 		self.screen_vao.render(mode=mgl.TRIANGLES, program=self.screen_shader.program)
 
