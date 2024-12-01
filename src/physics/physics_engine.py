@@ -65,18 +65,27 @@ def has_intersection_aabb_aabb (entity_a, entity_b):
 	# then shift one of objects belong that axis
 
 	# Check separate axis
-	result = []
-	result.append(aabb_test_axis((1, 0, 0), a_min_x, a_max_x, b_min_x, b_max_x, mtv_axis, mtv_len))
-	result.append(aabb_test_axis((0, 1, 0), a_min_y, a_max_y, b_min_y, b_max_y, mtv_axis, mtv_len))
-	result.append(aabb_test_axis((0, 0, 1), a_min_z, a_max_z, b_min_z, b_max_z, mtv_axis, mtv_len))
-	for axis in result:
-		if axis:
-			sep, len = axis
-			if len < mtv_len:
-				mtv_len = len
-				mtv_axis = sep
-		else:
-			return False
+	x_check = aabb_test_axis((1, 0, 0), a_min_x, a_max_x, b_min_x, b_max_x, mtv_axis, mtv_len)
+	if x_check:
+		if x_check[1] < mtv_len:
+			mtv_axis = x_check[0]
+			mtv_len = x_check[1]
+	else:
+		return False
+	y_check = aabb_test_axis((0, 1, 0), a_min_y, a_max_y, b_min_y, b_max_y, mtv_axis, mtv_len)
+	if y_check:
+		if y_check[1] < mtv_len:
+			mtv_axis = y_check[0]
+			mtv_len = y_check[1]
+	else:
+		return False
+	z_check = aabb_test_axis((0, 0, 1), a_min_z, a_max_z, b_min_z, b_max_z, mtv_axis, mtv_len)
+	if z_check:
+		if z_check[1] < mtv_len:
+			mtv_axis = z_check[0]
+			mtv_len = z_check[1]
+	else:
+		return False
 
 	overlap = mtv_len * glm.normalize(mtv_axis)
 

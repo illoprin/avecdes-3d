@@ -34,11 +34,11 @@ class Entity():
 		if collider == 'aabb' and (not use_physics):
 			self.collider = AABB(self)
 			self.rigidbody = None
-			print (f'Entity: {self.name} - Added AABB collider')
+			print (f'{self.name}: Added AABB collider')
 		elif collider == 'aabb' and use_physics:
 			self.collider = AABB(self)
 			self.rigidbody = Rigidbody(use_gravity=gravity)
-			print (f'Entity: {self.name} - Added rigidbody and AABB collider')
+			print (f'{self.name}: Added rigidbody and AABB collider')
 	
 	@property
 	def name(self):
@@ -78,10 +78,11 @@ class Entity():
 
 	def render(self, mode=mgl.TRIANGLES):
 		self.texture.use(TextureSlot.DiffuseMap)
-		self.program['u_texture'] = TextureSlot.DiffuseMap
+		self.program['u_diffuse_texture'] = TextureSlot.DiffuseMap
 		self.program['m_model'].write(self.model)
 		self.vao.render(self.program, mode)
 
 	def clear(self):
 		self.vao.release()
 		self.texture.release()
+		print (f'{self.name}: Cleared')

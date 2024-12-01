@@ -36,7 +36,7 @@ class SimplexEngine(mglw.WindowConfig):
 		self.update_window()
 
 	def init_scene(self):
-		self.scene_light_shader = Shader(self.ctx, 'default')
+		self.scene_light_shader = Shader(self.ctx, 'd_light')
 		self.player = Player(self.wnd, self.scene_light_shader, pos=(0, 0, -2))
 		self.scene = TestLevel(self, self.scene_light_shader, 'test_level')
 		
@@ -50,7 +50,6 @@ class SimplexEngine(mglw.WindowConfig):
 		
 
 	def render_scene(self):
-		self.scene_light_shader.set_byte_data('u_camera_position', self.player.camera.position)
 		self.scene.render()
 
 	def init_screen(self):
@@ -95,7 +94,7 @@ class SimplexEngine(mglw.WindowConfig):
 			print (f'Avecdes 3D: /{CACHE_DIR} folder created')
 
 	def take_screenshot(self):
-		data = self.scene.fbo.read(components=3) # COLOR
+		data = self.ctx.screen.read(components=3) # COLOR
 		# data = self.scene.fbo.read(attachment=1) # DEPTH
 		file_path = f'{SCREENSHOTS_DIR}/{datetime.now().strftime("%d-%m-%YT%H_%M-%S")}.jpg'
 		Image.frombytes('RGB', WIN_MODE, data).transpose(Image.FLIP_TOP_BOTTOM).save(

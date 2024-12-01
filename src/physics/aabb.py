@@ -5,8 +5,8 @@ class AABB(Collider):
 	tag = ColliderType.AABB
 	def __init__(self, entity, width = None, height = None, depth = None):
 		self.half_scale = glm.vec3(width / 2, height / 2, depth / 2) if width != None else entity.scale / 2
-		print (f'AABB - Collider of object named {entity.name} has half_scale bounds {self.half_scale.to_tuple()}')
 		self.entity = entity
+		print (f'AABB {self.entity.name}: Collider has half_scale bounds {self.half_scale.to_tuple()}')
 
 	@property
 	def position(self):
