@@ -52,7 +52,7 @@ class TestLevel(Scene):
 			cube_vao, 
 			texture='textures/wood',
 			pos=(0, 0, 0),
-			scl=(20, 0.5, 20),
+			scl=(10, 0.5, 10),
 			collider='aabb',
 			name='ground'
 		))

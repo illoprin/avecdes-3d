@@ -43,7 +43,7 @@ class Player():
 
 	def movement(self, delta_time):
 		self.delta_time = delta_time
-		vel = self.movement_velocity * 0.001
+		vel = self.movement_velocity * 0.005
 
 		if self.keyboard_statements.get(self.wnd.keys.W):
 			self.acceleration += self.camera.forward
@@ -59,10 +59,12 @@ class Player():
 			self.camera.move_down(PLAYER_SPEED * delta_time)
 
 		self.acceleration = glm.normalize(self.acceleration) if glm.length(self.acceleration) > 0 else self.acceleration
-
+		
 		self.velocity += self.acceleration * vel * self.delta_time
+		if glm.length(self.velocity) > vel:
+			self.velocity = glm.normalize(self.velocity) * vel
 		if glm.length(self.acceleration) < .5:
-			self.velocity -= (self.velocity / 1.2) * self.delta_time
+			self.velocity *= 0.985
 
 	def update(self, delta_time):
 		self.position += self.velocity

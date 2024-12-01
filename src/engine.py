@@ -73,17 +73,18 @@ class SimplexEngine(mglw.WindowConfig):
 
 	def update_window(self):
 		period = math.ceil(self.time*1000) % 5000
-		if (period == 0):
-			self.wnd.title = f'{WIN_TITLE} | FPS: {self.fps: .0f}'
+		self.wnd.title = f'{WIN_TITLE} | FPS: {self.fps: .0f}'
+		# self.screen_shader.set_uniform('u_width', WIN_MODE[0])
+		# self.screen_shader.set_uniform('u_height', WIN_MODE[1])
 			
 	def render(self, time: float, frame_time: float):
 		self.time = time
 		self.delta_time = frame_time
 		self.fps = 1 / self.delta_time
+		self.update_window()
 		self.update_scene()
 		self.render_scene()
 		self.combine_fbos()
-		self.update_window()
 
 	def create_dirs(self):
 		if not os.path.isdir(SCREENSHOTS_DIR):
@@ -94,12 +95,11 @@ class SimplexEngine(mglw.WindowConfig):
 			print (f'Avecdes 3D: /{CACHE_DIR} folder created')
 
 	def take_screenshot(self):
-		data = self.ctx.screen.read(components=3) # COLOR
-		# data = self.scene.fbo.read(attachment=1) # DEPTH
-		file_path = f'{SCREENSHOTS_DIR}/{datetime.now().strftime("%d-%m-%YT%H_%M-%S")}.jpg'
-		Image.frombytes('RGB', WIN_MODE, data).transpose(Image.FLIP_TOP_BOTTOM).save(
+		_data = self.ctx.screen.read(components=3) # COLOR
+		file_path = f'{SCREENSHOTS_DIR}/{datetime.now().strftime("%d-%m-%YT%H_%M-%S")}.png'
+		Image.frombytes('RGB', WIN_MODE, data=_data).transpose(Image.FLIP_TOP_BOTTOM).save(
 			file_path,
-			format='JPEG',
+			format='PNG',
 			quality=80
 		)
 	

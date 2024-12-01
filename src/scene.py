@@ -31,7 +31,7 @@ class Scene():
 
 	def init_scene_fbo(self):
 		# Init 3d scene framebuffer
-		self.fbo_color = self.ctx.texture(WIN_MODE, components=4, dtype='f1')
+		self.fbo_color = self.ctx.texture(WIN_MODE, components=4, dtype='f4')
 		self.fbo_depth = self.ctx.depth_renderbuffer(WIN_MODE)
 		self.fbo: mgl.Framebuffer = self.ctx.framebuffer(
 			color_attachments=[
@@ -39,12 +39,11 @@ class Scene():
 			],
 			depth_attachment = self.fbo_depth
 		)
-		self.fbo_depth_texture = self.ctx.texture(WIN_MODE, components=3, data=self.get_depth_bytes, dtype='f1')
 		print(f'{self.name} - Frame buffer created!')
 
 	@property
 	def get_depth_bytes(self):
-		return self.fbo.read(attachment=1)
+		return self.fbo.read(attachment=-1)
 
 	def update(self, time=0, delta_time=1):
 		# Update physics world
@@ -67,6 +66,5 @@ class Scene():
 		[item.clear() for item in self.objects]
 		self.fbo_color.release()
 		self.fbo_depth.release()
-		self.fbo_depth_texture.release()
 		self.fbo.release()
 		print(f'{self.name} - Framebuffer cleared')
