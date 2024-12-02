@@ -46,12 +46,13 @@ class InstancedMesh(Mesh):
 		)
 		return vao
 	
-	def update_model_buffer(self, model_list: list[glm.mat4x4]):
-		if len(model_list) < self.max_objects:
-			# Rewrite data in buffer with actual positions of entites
-			self.model_buffer.write(data=self.model_ndarray(model_list), offset=0)
+	def update_model_buffer(self, model: glm.mat4x4, index=0):
+		if index < self.max_objects:
+			# Rewrite data of a specific entity
+			model_b = np.array(model.to_list()).astype(np.float32)
+			self.model_buffer.write(data=model_b, offset=(index*64))
 		else:
-			raise ValueError (f'InstancedMesh.{self.name}: ERROR - Model buffer out of range\nMAX_OBJECTS is: {self.max_objects} MODEL LIST LEN is: {len(model_list)}')
+			raise ValueError (f'InstancedMesh.{self.name}: ERROR - Model buffer out of range\nMAX_OBJECTS is: {self.max_objects} OBJECT INDEX IS: {index}')
 	
 	def render(self, mode, instances):
 		self._vao.render(mode=mode, instances=int(instances))

@@ -21,7 +21,7 @@ class Entity(BaseEntity):
 		#
 		# Mesh link init
 		if isinstance(mesh, SingleMesh) or mesh == 'root': self.mesh = mesh
-		else: raise ValueError(f'{self.name}: ERROR - Invalid mesh object assigned') 
+		else: raise ValueError(f'{self.name}: ERROR - Invalid mesh object assigned')
 		#
 		# Texture link init
 		if isinstance(texture, mgl.Texture) or texture == 'root': self.texture = texture

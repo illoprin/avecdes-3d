@@ -9,15 +9,40 @@ class BaseEntity():
 	):
 		self._name = name
 		# Transforms
-		self.position = glm.vec3(pos)
-		self.rotation = glm.vec3(rot)
-		self.scale = glm.vec3(scl)
+		self._position = glm.vec3(pos)
+		self._rotation = glm.vec3(rot)
+		self._scale = glm.vec3(scl)
 		self.update()
+		self.need_redraw = True
 
 	@property
 	def name(self):
 		return f'Entity.{self._name}'
+	
+	def set_position(self, value: glm.vec3):
+		# print (f'{self.name}: Position changed. Needs buffer update')
+		self._position = value
+		self.need_redraw = True
+	def set_rotation(self, value: glm.vec3):
+		# print (f'{self.name}: Rotation changed. Needs buffer update')
+		self._rotation = value
+		self.need_redraw = True
+	def set_scale(self, value: glm.vec3):
+		# print (f'{self.name}: Scale changed. Needs buffer update')
+		self._scale = value
+		self.need_redraw = True
 
+	def get_position(self):
+		return self._position
+	def get_rotation(self):
+		return self._rotation
+	def get_scale(self):
+		return self._scale
+	
+	position = property(get_position, set_position)
+	rotation = property(get_rotation, set_rotation)
+	scale = property(get_scale, set_scale)
+	
 	def set_model(self, pos, rot, scl):
 		model = glm.mat4x4(1.0)
 		model = glm.scale(model, scl)
@@ -40,7 +65,7 @@ class BaseEntity():
 		self.scale *= glm.vec3(scale)
 
 	def update(self):
-		self.set_model(self.position, self.rotation, self.scale)
+		self.set_model(self._position, self._rotation, self._scale)
 
 	def render(self) -> None: pass
 

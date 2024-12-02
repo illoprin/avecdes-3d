@@ -7,14 +7,6 @@ from src.settings import *
 # ---- Instancing ----
 # Provides to render multiple simillar objects per one draw call
 ######################
-# Idea
-# 	Add entity to the scene with link to instanced mesh
-#	On render pass:
-# 		- Collect all entities with 'instanced' flag
-# 		- Collect all unique InstancedMesh objects
-#		- Collect all models related with each mesh
-#		- Render each mesh, passing it a list of models associated with it
-######################
 
 class EntityCluster():
 	def __init__(self, 
@@ -56,13 +48,17 @@ class EntityCluster():
 	
 	def process(self):
 		self._mesh.vao_init(len(self))
-		self._mesh.update_model_buffer([entity.model for entity in self._objects])
+		self.update_buffers()
 
 	def update(self, needs_redraw=False):
-		if needs_redraw:
-			[entity.update() for entity in self._objects]
-			self._mesh.update_model_buffer([entity.model for entity in self._objects])
-		pass
+		[entity.update() for entity in self._objects]
+		self.update_buffers()
+
+	def update_buffers(self):
+		for i, entity in enumerate(self._objects):
+			if entity.need_redraw:
+				self._mesh.update_model_buffer(entity.model, i)
+				entity.need_redraw = False
 
 	def render(self, mode):
 		self._texture.use(TextureSlot.ClusterDiffuseMap)

@@ -25,8 +25,8 @@ class TestLevel(Scene):
 
 		# Create zombies
 		self.zombie_cluster = EntityCluster('zombies', zombie_mesh, zombie_diff)
-		grid_x = 2
-		grid_y = 1000
+		grid_x = 10
+		grid_y = 10
 		size = 3
 		for i in range(grid_x * grid_y):
 			x = (i % 10 * size) - (grid_x / 2)
@@ -74,7 +74,11 @@ class TestLevel(Scene):
 	def update(self, time=0, delta_time=1):
 		# Update objects
 		#################
-
+		self.zombie_cluster[36].position = glm.vec3(
+			self.zombie_cluster[36].position.x,
+			glm.sin(time) * 3,
+			self.zombie_cluster[36].position.z
+		)
 		# Update lights
 		#################
 		self.blue_light.position += glm.vec3(glm.sin(time)*1.5, 0, glm.cos(time)*1.5) * delta_time
