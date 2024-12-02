@@ -3,8 +3,6 @@ from src.physics.physics_engine import CollisionTag, gravity_collinear
 
 # TODO: Решить проблему с телами, которые лежат друг на друге
 #	Сейчас их grounded = False даже когда они уже лежат друг на друге
-#	Переписать Rigidbody - все тела (и статичные, и динамичные) имеют Rigidbody
-#	RigidType.Static = 0 RigidType.Dynamic = 1
 
 class Rigidbody():
 	def __init__(self,
