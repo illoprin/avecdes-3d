@@ -7,6 +7,11 @@ class ColliderType(IntEnum):
 	AABB = 1
 	Mesh = 2
 
+class CollisionTag(IntEnum):
+	Static = 0
+	Dynamic = 1
+	Trigger = 2
+
 class Collider():
 	tag = ColliderType.NoCollider
 
@@ -103,11 +108,12 @@ class Collision():
 			'active': glm.vec3(),
 			'target': glm.vec3()
 		}
-		if self.active.has_rigidbody and not self.target.has_rigidbody:
+		active_tag, target_tag = self.active.rigidbody.tag, self.target.rigidbody.tag
+		if active_tag == CollisionTag.Dynamic and target_tag == CollisionTag.Static:
 			responce['active'] = self.overlap	
-		elif not self.active.has_rigidbody and self.target.has_rigidbody:
+		elif active_tag == CollisionTag.Static and target_tag == CollisionTag.Dynamic:
 			responce['target'] = self.overlap
-		elif self.active.has_rigidbody and self.target.has_rigidbody:
+		elif active_tag == CollisionTag.Dynamic and active_tag == CollisionTag.Dynamic:
 			half_overlap = self.overlap / 2
 			responce['active'] = half_overlap
 			responce['target'] = -half_overlap

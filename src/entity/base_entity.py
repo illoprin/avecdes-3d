@@ -6,12 +6,14 @@ class BaseEntity():
 		pos=(0,0,0),
 		rot=(0,0,0),
 		scl=(1,1,1),
+		origin=(0,0,0)
 	):
 		self._name = name
 		# Transforms
 		self._position = glm.vec3(pos)
 		self._rotation = glm.vec3(rot)
 		self._scale = glm.vec3(scl)
+		self._origin = glm.vec3(origin)
 		self.update()
 		self.need_redraw = True
 
@@ -34,8 +36,10 @@ class BaseEntity():
 
 	def get_position(self):
 		return self._position
+	
 	def get_rotation(self):
 		return self._rotation
+	
 	def get_scale(self):
 		return self._scale
 	
@@ -51,7 +55,7 @@ class BaseEntity():
 		model = glm.rotate(model, glm.radians(yaw), (0, 1, 0))
 		model = glm.rotate(model, glm.radians(roll), (0, 0, 1))
 		model = glm.translate(model, pos)
-		self.model = model
+		self.model = model * glm.translate(glm.mat4x4(1.0), self._origin)
 	
 	def rotate(self, rotation=(0, 0, 0)):
 		pitch, yaw, roll = rotation
@@ -65,7 +69,7 @@ class BaseEntity():
 		self.scale *= glm.vec3(scale)
 
 	def update(self):
-		self.set_model(self._position, self._rotation, self._scale)
+		self.set_model(self.position, self.rotation, self.scale)
 
 	def render(self) -> None: pass
 

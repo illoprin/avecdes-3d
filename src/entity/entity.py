@@ -30,15 +30,12 @@ class Entity(BaseEntity):
 		# Physics
 		self.rigidbody = None
 		self.collider = Collider()
+		self.rigidbody = Rigidbody(CollisionTag.Static)
 		if collider == 'aabb' and (not use_physics):
 			self.collider = AABB(self)
-			self.rigidbody = None
 			print (f'{self.name}: Added AABB collider')
 		elif collider == 'aabb' and use_physics:
 			self.collider = AABB(self)
-			self.rigidbody = Rigidbody(use_gravity=gravity)
+			self.rigidbody.tag = CollisionTag.Dynamic
+			self.rigidbody.use_gravity = gravity
 			print (f'{self.name}: Added rigidbody and AABB collider')
-		
-	@property
-	def has_rigidbody(self):
-		return self.rigidbody != None

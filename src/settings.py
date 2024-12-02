@@ -33,9 +33,10 @@ DIR_UP = glm.vec3(0, 1, 0)
 DIR_FORWARD = glm.vec3(0, 0, 1)
 DIR_RIGHT = glm.vec3(1, 0, 0)
 
-# Scene params
+# Resources control
 MAX_NOT_INSTANCED_OBJECTS_PER_SCENE: int = 128
 MAX_OBJECTS_PER_CLUSTER: int = 2048
+FLOAT32_BYTE_SIZE: int = 64
 
 # Camera
 CAM_FOV = math.pi / 2 + math.pi / 4

@@ -14,19 +14,19 @@ class AABB(Collider):
 
 	@property
 	def min(self):
-		return glm.vec3(
+		return [
 			self.position.x - self.half_scale.x,
 			self.position.y - self.half_scale.y, 
 			self.position.z - self.half_scale.z, 
-		)
+		]
 	
 	@property
 	def max(self):
-		return glm.vec3(
+		return [
 			self.position.x + self.half_scale.x,
 			self.position.y + self.half_scale.y,
 			self.position.z + self.half_scale.z,
-		)
+		]
 	
 	@staticmethod
 	def get_points(pos, scl):

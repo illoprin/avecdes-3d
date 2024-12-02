@@ -1,5 +1,5 @@
 from src.settings import *
-from src.physics.physics_engine import gravity_collinear
+from src.physics.physics_engine import CollisionTag, gravity_collinear
 
 # TODO: Решить проблему с телами, которые лежат друг на друге
 #	Сейчас их grounded = False даже когда они уже лежат друг на друге
@@ -8,11 +8,13 @@ from src.physics.physics_engine import gravity_collinear
 
 class Rigidbody():
 	def __init__(self,
-		mass = 1.0, 
+		tag: CollisionTag,
+		mass = 1.0,
 		use_gravity = False,
 		start_velocity = (0, 0, 0),
 		start_acceleration = (0, 0, 0)
 	):
+		self.tag = tag
 		self.mass = mass
 		self.use_gravity = use_gravity
 		self.acceleration = glm.vec3(start_acceleration)

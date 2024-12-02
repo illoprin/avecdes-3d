@@ -1,10 +1,11 @@
 from src.settings import *
 from src.physics.aabb import AABB
+from src.entity.entity import Entity
 from src.physics.physics_engine import *
 
 class PhysicsWorld():
 	def __init__(self, gravity: tuple) -> None:
-		self.objects = []
+		self.objects: list[Entity] = []
 		self.collision_pairs = []
 		self.gravity = glm.vec3(*gravity)
 
@@ -18,12 +19,12 @@ class PhysicsWorld():
 			self.detect_collisions(obj)
 			self.collision_responce()
 
-	def update_rigidbodies(self, active, delta_time):
-		if active.rigidbody != None:
+	def update_rigidbodies(self, active: Entity, delta_time):
+		if active.rigidbody.tag == CollisionTag.Dynamic:
 			active.rigidbody.update(delta_time)
 			active.position += active.rigidbody.velocity
 		
-	def detect_collisions(self, active):
+	def detect_collisions(self, active: Entity):
 		for target in self.objects:
 			if active == target: continue
 			active_type, target_type = active.collider.tag, target.collider.tag
@@ -34,10 +35,11 @@ class PhysicsWorld():
 					collision_responce = collision.responce
 					active.position += collision_responce['active']
 					target.position += collision_responce['target']
-					if active.has_rigidbody: active.rigidbody.grounded = gravity_collinear(-collision_responce['active'])
+					if active.rigidbody.tag == CollisionTag.Dynamic:
+						active.rigidbody.grounded = gravity_collinear(-collision_responce['active'])
 					# print (f'PhysicsWorld: has collision of {active.name} and {target.name}\tOverlap is: {collision.overlap.to_tuple()}')
 
 	def collision_responce(self):
 		# TODO: Apply momentum responce when two rigidbodies colliding
 		pass
-		self.collisions = []
+		self.collision_pairs = []

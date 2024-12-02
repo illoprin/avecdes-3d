@@ -1,57 +1,58 @@
+from src.settings import *
 from src.scene import Scene
 from src.entity.entity import Entity
-from src.entity.entity_cluster import EntityCluster
-import moderngl_window.geometry as mglg
-from src.settings import *
-from src.mesh.mesh_types import init_cube_mesh, init_zombie_mesh_i
-from src.physics.aabb import AABB
 from src.texture import TextureManager
+from src.entity.entity_cluster import EntityCluster
+from src.mesh.mesh_types import init_cube_mesh, init_zombie_mesh_i, init_cube_mesh_i
 from src.light.light_types import PointLight, AmbientLight, SpotLight
-
-
 
 class TestLevel(Scene):
 	def __init__ (self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		cube_mesh = init_cube_mesh(self.ctx, self.shader)
 
 		# Init meshes
-		zombie_mesh = init_zombie_mesh_i(self.ctx, self.shader)
-		zombie_diff = TextureManager.load_texture(self.ctx, 'textures/zombie', False, mgl.NEAREST)
+		cube_mesh_ins = init_cube_mesh_i(self.ctx, self.shader)
+		cube_mesh = init_cube_mesh(self.ctx, self.shader)
 
 		# Init textures
 		checker = TextureManager.load_texture(self.ctx, 'textures/checker', False, mgl.NEAREST)
-		# wood = TextureManager.load_texture(self.ctx, 'textures/wood', False, mgl.NEAREST)
+		wood = TextureManager.load_texture(self.ctx, 'textures/wood', False, mgl.NEAREST)
 
 		# Create zombies
-		self.zombie_cluster = EntityCluster('zombies', zombie_mesh, zombie_diff)
-		grid_x = 10
-		grid_y = 10
-		size = 3
+		self.cube_cluster = EntityCluster('cubes', cube_mesh_ins, checker)
+		grid_x = 4
+		grid_y = 4
+		size = 4
 		for i in range(grid_x * grid_y):
-			x = (i % 10 * size) - (grid_x / 2)
-			y = (i // 10 * size) - (grid_y / 2)
-			zombie = Entity(
+			x = ((i % grid_x) - (grid_x / 2)) * size
+			y = ((i // grid_y) - (grid_y / 2)) * size
+			cube = Entity(
 				mesh='root',
 				texture='root',
-				name='zombie',
-				pos=(x, 0, y),
-				scl=(2, 2, 2)
+				name='instanced_cube',
+				collider='aabb',
+				use_physics=True,
+				gravity=True,
+				pos=(x + np.random.random(), 10, y + np.random.random()),
+				origin=(0, 1, 0)
 			)
-			self.zombie_cluster.append_object(zombie)
-		self.zombie_cluster.process()
-		
-		# Append objects to scene
-		self.append_object(self.zombie_cluster)
+			# Append objects to cluster
+			self.cube_cluster.append_object(cube)
+		self.cube_cluster.process()
+		self.cube_cluster[0].rigidbody.use_gravity = False
 		self.ground = Entity(
 			mesh=cube_mesh,
 			name='ground',
-			texture=checker,
-			pos=(0, -.25, 0),
-			scl=(20, .25, 20),
+			texture=wood,
+			collider='aabb',
+			pos=(0, -1, 0),
+			scl=(20, .5, 20),
+			origin=(0, 1, 0)
 		)
+		# Append objects to scene
+		self.append_object(self.cube_cluster)
 		self.append_object(self.ground)
-
+		
 		# Init lights
 		self.lighting.add_al(
 			AmbientLight(color=glm.vec3(0.1/4, 0.11/4, 0.13/4))
@@ -74,11 +75,9 @@ class TestLevel(Scene):
 	def update(self, time=0, delta_time=1):
 		# Update objects
 		#################
-		self.zombie_cluster[36].position = glm.vec3(
-			self.zombie_cluster[36].position.x,
-			glm.sin(time) * 3,
-			self.zombie_cluster[36].position.z
-		)
+		player_dir = self.app.player.position - self.cube_cluster[0].position
+		self.cube_cluster[0].rigidbody.add_force(player_dir)
+		# self.ground.position.y = glm.sin(time)
 		# Update lights
 		#################
 		self.blue_light.position += glm.vec3(glm.sin(time)*1.5, 0, glm.cos(time)*1.5) * delta_time
