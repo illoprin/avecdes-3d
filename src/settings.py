@@ -37,6 +37,7 @@ DIR_RIGHT = glm.vec3(1, 0, 0)
 MAX_NOT_INSTANCED_OBJECTS_PER_SCENE: int = 128
 MAX_OBJECTS_PER_CLUSTER: int = 2048
 FLOAT32_BYTE_SIZE: int = 64
+UPDATE_TRESHOLD: float = 0.02
 
 # Camera
 CAM_FOV = math.pi / 2 + math.pi / 4
@@ -54,3 +55,4 @@ PLAYER_H = 2
 # Physics
 PHYS_GRAVITY = glm.vec3(0, -9.81, 0)
 PHYS_WINDAGE = 0.76 # Air resistance
+PHYS_MIN_Y = -10

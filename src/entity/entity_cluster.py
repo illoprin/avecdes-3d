@@ -43,7 +43,10 @@ class EntityCluster():
 		else:
 			print(f'{self.name}: ERROR - You are trying to assign an object to a cluster that is not an entity!')
 
-	def __len__ (self):
+	def get_alive(self):
+		return list(filter(lambda entity: entity.alive, self._objects))
+	
+	def __len__(self):
 		return len(self._objects)
 	
 	def process(self):

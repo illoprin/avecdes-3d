@@ -15,9 +15,11 @@ class PhysicsWorld():
 
 	def update(self, delta_time):
 		for obj in self.objects:
-			self.update_rigidbodies(obj, delta_time)
-			self.detect_collisions(obj)
-			self.collision_responce()
+			if obj.alive:
+				self.update_rigidbodies(obj, delta_time)
+				self.detect_collisions(obj)
+				self.collision_responce()
+				self.clear_extra(obj)
 
 	def update_rigidbodies(self, active: Entity, delta_time):
 		if active.rigidbody.tag == CollisionTag.Dynamic:
@@ -43,3 +45,7 @@ class PhysicsWorld():
 		# TODO: Apply momentum responce when two rigidbodies colliding
 		pass
 		self.collision_pairs = []
+
+	def clear_extra(self, active: Entity):
+		if active.position.y < PHYS_MIN_Y:
+			active.alive = False

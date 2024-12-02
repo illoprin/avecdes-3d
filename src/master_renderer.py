@@ -9,10 +9,11 @@ class MasterRenderer():
 
 	def render_entities(self, entity_list: list[Entity]):
 		for entity in entity_list:
-			entity.texture.use(TextureSlot.DiffuseMap)
-			entity.mesh.program['u_diffusemap'] = TextureSlot.DiffuseMap
-			entity.mesh.update_model_buffer(entity.model)
-			entity.mesh.render(self.mode)
+			if entity.alive:
+				entity.texture.use(TextureSlot.DiffuseMap)
+				entity.mesh.program['u_diffusemap'] = TextureSlot.DiffuseMap
+				entity.mesh.update_model_buffer(entity.model)
+				entity.mesh.render(self.mode)
 
 	def render_clusters(self, cluster_list: list[EntityCluster]):
 		[cluster.render(self.mode) for cluster in cluster_list]
