@@ -72,8 +72,9 @@ class SimplexEngine(mglw.WindowConfig):
 		self.screen_vao.render(mode=mgl.TRIANGLES, program=self.screen_shader.program)
 
 	def update_window(self):
-		period = math.ceil(self.time*1000) % 5000
-		self.wnd.title = f'{WIN_TITLE} | FPS: {self.fps: .0f}'
+		period = math.ceil(self.time*1000) % 1000
+		if period == 0:
+			self.wnd.title = f'{WIN_TITLE} | FPS: {self.fps: .0f}'
 		# self.screen_shader.set_uniform('u_width', WIN_MODE[0])
 		# self.screen_shader.set_uniform('u_height', WIN_MODE[1])
 			

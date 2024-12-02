@@ -11,9 +11,10 @@ class LightType(IntEnum):
 
 @dataclass
 class Light:
+	color: glm.vec3 = glm.vec3(1.0) # r g b represented float from 0.0 to 1.0
+	enabled: int = 1
 	type = LightType.Empty
 	index = 0
-	color: glm.vec3 # r g b represented float from 0.0 to 1.0
 
 class AmbientLight(Light):
 	type = LightType.Ambient
@@ -21,7 +22,7 @@ class AmbientLight(Light):
 @dataclass
 class PointLight(Light):
 	type = LightType.Point
-	position: glm.vec3
+	position: glm.vec3 = glm.vec3(0.0)
 	intensity: float = 10.2
 	radius: float = 5.0 # meters
 	specular: float = 10.0
@@ -29,8 +30,8 @@ class PointLight(Light):
 @dataclass
 class SpotLight(Light):
 	type = LightType.Spot
-	position: glm.vec3
-	direction: glm.vec3
+	position: glm.vec3 = glm.vec3(0.0)
+	direction: glm.vec3 = glm.vec3(0.0)
 	distance: float = 5.4 # distance of spotlight in meters
 	intensity: float = 7.23
 	outer_cut_off: float = glm.cos(glm.radians(34.5)) # cos range of inner cone in radians
@@ -38,5 +39,5 @@ class SpotLight(Light):
 
 @dataclass
 class SunLight(Light):
-	direction: glm.vec3
+	direction: glm.vec3 = glm.vec3(0, -1, 0)
 	intensity: float = 1.0

@@ -26,17 +26,22 @@ class TextureSlot(IntEnum):
 	DiffuseMap = 2
 	NormalMap = 3
 	LevelTextureArray = 4
+	ClusterDiffuseMap = 5
 
 # World dirs
 DIR_UP = glm.vec3(0, 1, 0)
 DIR_FORWARD = glm.vec3(0, 0, 1)
 DIR_RIGHT = glm.vec3(1, 0, 0)
 
+# Scene params
+MAX_NOT_INSTANCED_OBJECTS_PER_SCENE: int = 128
+MAX_OBJECTS_PER_CLUSTER: int = 2048
+
 # Camera
 CAM_FOV = math.pi / 2 + math.pi / 4
 CAM_FOV_V = CAM_FOV
 CAM_FOV_H = 2 * glm.tan(glm.atan(CAM_FOV_V / 2) * WIN_ASPECT)
-CAM_NEAR_FAR = (0.01, 5000.0)
+CAM_NEAR_FAR = (0.01, 500.0)
 CAM_MAX_PITCH = math.pi / 2
 
 # Player

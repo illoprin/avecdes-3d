@@ -1,33 +1,40 @@
 import moderngl as mgl
 from src.settings import *
 from src.entity.entity import Entity
+from src.master_renderer import MasterRenderer
+from src.entity.entity_cluster import EntityCluster
 from src.physics.physics_world import PhysicsWorld
 from src.light.light_controller import LightController
 
 class Scene():
 	def __init__(self, app, shader, name: str = 'avecdes'):
 		self._name = name
-		self.s_program = shader.program
+		self.shader = shader
 		self.app = app
-		self.ctx: mgl.Context = app.ctx
-		self.objects: list[Entity] = []
-		self.physics_world = PhysicsWorld((0, -9.81, 0))
-		self.lighting = LightController(app, shader)
 		self.clear_color = (*WIN_CLEAR, 1.0)
+		self.ctx: mgl.Context = app.ctx
+
+		self.objects: list[Entity] = []
+		self.clusters: list[EntityCluster] = []
+		self.renderer = MasterRenderer()
+		self.physics_world = PhysicsWorld((0, -9.81, 0))
+		self.lighting = LightController(app, self.shader)
 		self.init_scene_fbo()
 
 	@property
 	def name(self):
 		return 'Scene.' + self._name
 	
-	def append_object(self, entity: Entity):
-		if entity.program == None and self.s_program != None:
-			entity.program = self.s_program
-		elif entity.program == None and self.s_program == None:
-			return ValueError(f'{self.name} - Main rendering shader not found')
-		
-		self.physics_world.add(entity)
-		self.objects.append(entity)
+	'''
+		You can append Entity or prepared EntityCluster to scene
+	'''
+	def append_object(self, object):
+		if isinstance(object, Entity): 
+			self.physics_world.add(object)
+			self.objects.append(object)
+		elif isinstance(object, EntityCluster):
+			[self.physics_world.add(entity) for entity in object.objects]
+			self.clusters.append(object)
 
 	def init_scene_fbo(self):
 		# Init 3d scene framebuffer
@@ -44,12 +51,18 @@ class Scene():
 	@property
 	def get_depth_bytes(self):
 		return self.fbo.read(attachment=-1)
-
+	
 	def update(self, time=0, delta_time=1):
 		# Update physics world
 		self.physics_world.update(delta_time)
-		# Update only dynamic objects (дикий колхоз на самом деле, но как есть)
-		[item.update() for item in self.objects if item.rigidbody != None]
+
+		# Колхоз: обновляются все объекты на сцене, как динамические, так и статические
+		# Update entities
+		[entity.update() for entity in self.objects]
+
+		# Update clusters
+		[cluster.update() for cluster in self.clusters]
+
 		# Send dynamic lights data to shader
 		self.lighting.update()
 
@@ -57,13 +70,19 @@ class Scene():
 		self.fbo.use()
 		self.fbo.clear(*self.clear_color)
 		# Send nesserary data  to shader
-		self.s_program['u_camera_position'].write(self.app.player.camera.position)
+		self.shader.set_uniform('u_camera_position', self.app.player.camera.position)
 
-		[item.render(mode) for item in self.objects]
-		# self.fbo_depth_texture.write(self.get_depth_bytes)
-
+		######## Rendering ########
+		# Render entity cluster
+		self.renderer.render_clusters(self.clusters)
+		# Render entities
+		self.renderer.render_entities(self.objects)
+		###########################
+		
+				
 	def clear(self):
-		[item.clear() for item in self.objects]
+		self.renderer.clear_entities(self.objects)
+		self.renderer.clear_clusters(self.clusters)
 		self.fbo_color.release()
 		self.fbo_depth.release()
 		self.fbo.release()
