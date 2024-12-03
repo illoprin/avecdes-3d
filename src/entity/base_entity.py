@@ -14,6 +14,7 @@ class BaseEntity():
 		origin=(0,0,0)
 	):
 		self._name = name
+		self.tag = EntityTypes.Main
 
 		# Transforms
 		self._position = glm.vec3(pos)
@@ -29,7 +30,7 @@ class BaseEntity():
 		self._alive = True
 
 		self._origin = glm.vec3(origin)
-		self.update()
+		if self.tag == EntityTypes.Main: self.update()
 		self.need_redraw = True
 
 	@property

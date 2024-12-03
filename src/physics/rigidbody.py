@@ -19,7 +19,9 @@ class Rigidbody():
 		self.velocity = glm.vec3(start_velocity)
 		self.delta_time = 0
 		self.shift = glm.vec3()
+
 		self.grounded = False
+		self.last_collision = glm.vec3()
 
 	def update(self, delta_time):
 		self.delta_time = delta_time
@@ -27,15 +29,13 @@ class Rigidbody():
 		# If using gravity
 		if self.use_gravity and not self.grounded:
 			self.velocity += PHYS_GRAVITY
-		elif self.grounded:
-			self.reset_velocity()
+		if self.grounded and self.velocity.y < 0:
+			self.velocity.y = 0
 		##################
-		# print (self.grounded)
 		self.velocity *= PHYS_WINDAGE * self.delta_time
 
 	def add_force (self, vec: glm.vec3):
-		if self.grounded and not gravity_collinear(vec): self.grounded = False
-		self.acceleration = vec / self.mass
+		self.acceleration += vec / self.mass
 
 	def reset_velocity (self):
 		self.velocity = glm.vec3(0)

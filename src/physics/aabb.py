@@ -1,9 +1,10 @@
-from src.settings import *
 from src.physics.physics_engine import *
+from src.entity.base_entity import BaseEntity
+from src.settings import *
 
 class AABB(Collider):
 	tag = ColliderType.AABB
-	def __init__(self, entity, width = None, height = None, depth = None):
+	def __init__(self, entity: BaseEntity, width = None, height = None, depth = None):
 		self.half_scale = glm.vec3(width / 2, height / 2, depth / 2) if width != None else entity.scale / 2
 		self.entity = entity
 		print (f'AABB {self.entity.name}: Collider has half_scale bounds {self.half_scale.to_tuple()}')

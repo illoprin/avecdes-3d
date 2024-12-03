@@ -8,7 +8,7 @@ from datetime import datetime
 
 from src.settings import *
 from src.shader_program import Shader
-from src.player.player import Player
+from src.player.fps_controller import FPSController
 from src.levels.test_level import TestLevel
 
 class SimplexEngine(mglw.WindowConfig):
@@ -37,14 +37,15 @@ class SimplexEngine(mglw.WindowConfig):
 
 	def init_scene(self):
 		self.scene_light_shader = Shader(self.ctx, 'd_light')
-		self.player = Player(self.wnd, self.scene_light_shader, pos=(0, 0, -2))
+		self.player = FPSController(self, self.scene_light_shader, pos=(-1, 3, 0))
 		self.scene = TestLevel(self, self.scene_light_shader, 'test_level')
+		self.scene.append_object(self.player)
 		
 	def update_scene(self):
 		if self.wnd.mouse_exclusivity:
-			self.player.movement(self.delta_time)
-		self.player.update(self.delta_time)
-
+			self.player.movement()
+		self.player.update_player()
+		#
 		# update scene
 		self.scene.update(self.time, self.delta_time)
 		

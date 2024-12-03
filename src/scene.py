@@ -1,6 +1,6 @@
 import moderngl as mgl
 from src.settings import *
-from src.entity.entity import Entity
+from src.entity.base_entity import BaseEntity
 from src.master_renderer import MasterRenderer
 from src.entity.entity_cluster import EntityCluster
 from src.physics.physics_world import PhysicsWorld
@@ -14,7 +14,7 @@ class Scene():
 		self.clear_color = (*WIN_CLEAR, 1.0)
 		self.ctx: mgl.Context = app.ctx
 
-		self.objects: list[Entity] = []
+		self.objects: list[BaseEntity] = []
 		self.clusters: list[EntityCluster] = []
 		self.renderer = MasterRenderer()
 		self.physics_world = PhysicsWorld((0, -9.81, 0))
@@ -29,7 +29,7 @@ class Scene():
 		You can append Entity or prepared EntityCluster to scene
 	'''
 	def append_object(self, object):
-		if isinstance(object, Entity): 
+		if isinstance(object, BaseEntity): 
 			self.physics_world.add(object)
 			self.objects.append(object)
 		elif isinstance(object, EntityCluster):

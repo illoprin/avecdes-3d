@@ -28,6 +28,10 @@ class TextureSlot(IntEnum):
 	LevelTextureArray = 4
 	ClusterDiffuseMap = 5
 
+class EntityTypes(IntEnum):
+	Main = 0
+	Helper = 1
+
 # World dirs
 DIR_UP = glm.vec3(0, 1, 0)
 DIR_FORWARD = glm.vec3(0, 0, 1)
@@ -47,9 +51,9 @@ CAM_NEAR_FAR = (0.01, 500.0)
 CAM_MAX_PITCH = math.pi / 2
 
 # Player
-PLAYER_SPEED = 3.5
+PLAYER_SPEED = 2.23
 PLAYER_SENSITIVITY = 0.1
-PLAYER_SPEED_MODIFER = 4.0
+PLAYER_SPEED_MODIFER = 2
 PLAYER_H = 2
 
 # Physics

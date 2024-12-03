@@ -10,7 +10,7 @@ class ColliderType(IntEnum):
 class CollisionTag(IntEnum):
 	Static = 0
 	Dynamic = 1
-	Trigger = 2
+	Trigger = 3
 
 class Collider():
 	tag = ColliderType.NoCollider
@@ -120,4 +120,4 @@ class Collision():
 		return responce
 	
 def gravity_collinear(vec: glm.vec3):
-	return glm.dot(glm.normalize(vec), glm.normalize(PHYS_GRAVITY)) > 0.9
+	return glm.dot(glm.normalize(-vec), glm.normalize(PHYS_GRAVITY)) > 0.9

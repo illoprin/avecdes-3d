@@ -9,7 +9,7 @@ class MasterRenderer():
 
 	def render_entities(self, entity_list: list[Entity]):
 		for entity in entity_list:
-			if entity.alive:
+			if entity.alive and entity.tag == EntityTypes.Main:
 				entity.texture.use(TextureSlot.DiffuseMap)
 				entity.mesh.program['u_diffusemap'] = TextureSlot.DiffuseMap
 				entity.mesh.update_model_buffer(entity.model)
@@ -26,10 +26,11 @@ class MasterRenderer():
 		for entity in entity_list:
 			entity.clear()
 			print (f'MasterRenderer: {entity.name} Cleared')
-			if not entity.mesh in meshes:
-				meshes.append(entity.mesh)
-			if not entity.texture in textures:
-				textures.append(entity.texture)
+			if entity.tag != EntityTypes.Helper:
+				if not entity.mesh in meshes:
+					meshes.append(entity.mesh)
+				if not entity.texture in textures:
+					textures.append(entity.texture)
 
 		# Clear meshes
 		for mesh in meshes:

@@ -39,7 +39,6 @@ class TestLevel(Scene):
 			# Append objects to cluster
 			self.cube_cluster.append_object(cube)
 		self.cube_cluster.process()
-		self.cube_cluster[0].rigidbody.use_gravity = False
 		self.ground = Entity(
 			mesh=cube_mesh,
 			name='ground',
@@ -75,9 +74,7 @@ class TestLevel(Scene):
 	def update(self, time=0, delta_time=1):
 		# Update objects
 		#################
-		player_dir = self.app.player.position - self.cube_cluster[0].position
-		self.cube_cluster[0].rigidbody.add_force(player_dir)
-		# self.ground.position.y = glm.sin(time)
+		# print (self.cube_cluster[0].rigidbody.grounded, self.cube_cluster[0].rigidbody.acceleration)
 		# Update lights
 		#################
 		self.blue_light.position += glm.vec3(glm.sin(time)*1.5, 0, glm.cos(time)*1.5) * delta_time
