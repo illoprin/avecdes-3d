@@ -110,7 +110,7 @@ class Collision():
 		}
 		active_tag, target_tag = self.active.rigidbody.tag, self.target.rigidbody.tag
 		if active_tag == CollisionTag.Dynamic and target_tag == CollisionTag.Static:
-			responce['active'] = self.overlap	
+			responce['active'] = self.overlap
 		elif active_tag == CollisionTag.Static and target_tag == CollisionTag.Dynamic:
 			responce['target'] = self.overlap
 		elif active_tag == CollisionTag.Dynamic and active_tag == CollisionTag.Dynamic:

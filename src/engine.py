@@ -8,7 +8,7 @@ from datetime import datetime
 
 from src.settings import *
 from src.shader_program import Shader
-from src.player.fps_controller import FPSController
+from src.player.player import Player
 from src.levels.test_level import TestLevel
 
 class SimplexEngine(mglw.WindowConfig):
@@ -21,6 +21,8 @@ class SimplexEngine(mglw.WindowConfig):
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 		self.ctx.enable(OPENGL_STATEMENTS)
+		# Function for alpha value calculation and blending
+		self.ctx.blend_func = mgl.DEFAULT_BLENDING
 
 		# Init base vars
 		self.time = 0
@@ -37,14 +39,15 @@ class SimplexEngine(mglw.WindowConfig):
 
 	def init_scene(self):
 		self.scene_light_shader = Shader(self.ctx, 'd_light')
-		self.player = FPSController(self, self.scene_light_shader, pos=(-1, 3, 0))
+		self.player = Player(self.wnd, self.scene_light_shader)
 		self.scene = TestLevel(self, self.scene_light_shader, 'test_level')
 		self.scene.append_object(self.player)
 		
 	def update_scene(self):
 		if self.wnd.mouse_exclusivity:
-			self.player.movement()
-		self.player.update_player()
+			self.player.movement(self.delta_time)
+		self.player.update(self.delta_time)
+		# print(self.player.position, self.player.camera.forward)
 		#
 		# update scene
 		self.scene.update(self.time, self.delta_time)
@@ -113,6 +116,8 @@ class SimplexEngine(mglw.WindowConfig):
 				self.wnd.mouse_exclusivity = not self.wnd.mouse_exclusivity
 			if key == self.wnd.keys.F5:
 				self.take_screenshot()
+			if key == self.wnd.keys.F:
+				self.scene.flashlight.enabled = 0 if self.scene.flashlight.enabled == 1 else 1
 	def mouse_drag_event(self, x: int, y: int, dx: int, dy: int):
 		pass
 	def mouse_position_event(self, x: int, y: int, dx: int, dy: int):

@@ -51,7 +51,7 @@ class LightController():
 			light.index = self.pl_index
 			self.pl_index += 1
 		elif light.type == LightType.Spot:
-			self.index = self.sl_index
+			light.index = self.sl_index
 			self.sl_index += 1
 	
 	'''

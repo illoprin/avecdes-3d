@@ -47,6 +47,7 @@ class FPSController(BaseEntity):
 			if key in self.keyboard_statements:
 				self.keyboard_statements[key] = True
 				self.walking = True
+            # Jump now time is weird - fuck this shit
 			if key == self.wnd.keys.SPACE:
 				# self.jump()
 				pass
@@ -84,16 +85,8 @@ class FPSController(BaseEntity):
 		if self.rigidbody.grounded:
 			self.rigidbody.grounded = False
 			self.rigidbody.add_force(glm.vec3(0, 1, 0) * PLAYER_SPEED * 800)
-	
 
 	def camera_effects(self):
-		print(self.rigidbody.grounded)
 		ratio = glm.length(self.rigidbody.acceleration)/self.movement_velocity
 		y = glm.cos(self.app.time*8) * .025
 		self.camera_jitter = glm.vec3(0, y, 0) * ratio
-
-	
-
-	
-
-		

@@ -7,13 +7,13 @@ class TextureManager:
 		self.ctx = ctx
 
 	@staticmethod
-	def load_texture(ctx, assets_path: str, alpha=False, filter_type=0x2601) -> mgl.Texture:
+	def load_texture(ctx: mgl.Context, assets_path: str, alpha=False, filter_type=0x2601) -> mgl.Texture:
 		path = f'{ASSETS_DIR}/{assets_path}.png'
 		if os.path.isfile(path):
 			components = 4 if alpha else 3
 			format = 'RGBA' if alpha else 'RGB'
 			#
-			img = Image.open(path).convert(format)
+			img = Image.open(path).convert(format).transpose(Image.FLIP_TOP_BOTTOM)
 			texture = ctx.texture(size=img.size, components=components, data=img.tobytes(), dtype='f1')
 			texture.filter = (filter_type, filter_type)
 		else:

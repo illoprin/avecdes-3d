@@ -110,15 +110,17 @@ out vec4 frag_color;
 
 void main() {
 	vec4 diffuse_color = texture(u_diffusemap, obj_uv);
+	if (diffuse_color.a <= 0.1) discard;
 	// Enter gamma to changing mode
 	diffuse_color.rgb = pow(diffuse_color.rgb, vec3(gamma));
 
-	// Ambient light
-	float theta = dot(normalize(u_camera_position - obj_frag_position), out_normal) * .5;
-	float al_modifer = min(.5 + theta, 1.0);
+	// Ambient light based on dot product of camera position and normal direction
+	// First shit code
+	// float theta = dot(normalize(u_camera_position - obj_frag_position), out_normal) * .5;
+	// float al_modifer = min(.5 + theta, 1.0);
 
 	// Summorize all lighting
-	vec3 lighting = (u_ambient_light * al_modifer);
+	vec3 lighting = u_ambient_light;
 	for(uint i = 0; i < point_light.length(); i++) {
 		lighting += getPointLight(point_light[i]);
 	}

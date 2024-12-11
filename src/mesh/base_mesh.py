@@ -13,10 +13,12 @@ class Mesh():
 		position_indices: np.ndarray = None,
 		normal_indices: np.ndarray = None,
 		texcoord_indices: np.ndarray = None,
-		decrement=0
+		decrement=0,
+		cull_face=True,
 	):
 		self._ctx: mgl.Context = ctx
 		self._program: mgl.Program = program
+		self.cull_face = cull_face
 		self._name = name
 
 		self._vertices = get_indexed_data(position, position_indices, format_size=3, decrement=decrement)
@@ -71,7 +73,9 @@ class Mesh():
 	def instance(self) -> mgl.VertexArray: pass
 
 	def render(self, mode=mgl.TRIANGLES, instances=1) -> None:
+		if not self.cull_face: self._ctx.disable(mgl.CULL_FACE)
 		self._vao.render(mode, instances=instances)
+		if not self.cull_face: self._ctx.enable(mgl.CULL_FACE)
 
 	def clear(self) -> None:
 		self.model_buffer.release()
