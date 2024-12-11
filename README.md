@@ -15,6 +15,9 @@
 
 ![screenshot_2](https://github.com/user-attachments/assets/630a3b35-b8de-4094-bfe8-0bdd4e8d4f8e)
 
+> [!CAUTION]
+> If you want to build project from sources on your PC, please, check **requirements.txt**
+
 ##
 
 This was a bold attempt to create a full-fledged 3D engine on Python, but Python has its own perfomance limitations.
@@ -38,7 +41,8 @@ You can create your own level following next steps
 
 ##
 
-- Create new file in levels directory using this pattern:
+Create new file in levels directory using this pattern:
+
 ```python
 from src.settings import *
 from src.scene import Scene
@@ -64,7 +68,7 @@ class MyLevel(Scene):
 > - Init mesh object
 > - Init texture object
 > - Init entity object\objects related to this mesh
-	> - Init entity cluster if you want to draw multiple objects using same mesh in one **draw call**
+> 	- Init entity cluster if you want to draw multiple objects using same mesh in one **draw call**
 > - Append entity or entity cluster to scene
 
 ##
@@ -113,7 +117,7 @@ TextureManager.load_texture
 	filter_type: int
 )
 ```
-Example for loading non-alpha texture with linear closest interpolation
+Example for loading non-alpha texture with closest interpolation type
 ```python
 your_texture = TextureManager.load_texture(self.ctx, 'textures/your_texture', False, mgl.NEAREST)
 ```
